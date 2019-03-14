@@ -1,0 +1,198 @@
+{
+    "avg_slow":{
+        "base_lr": 1e-2, "lrs": [100, 1], "wd": 5e-2, "seeds": [-1], "opt": "sgd", "cuda": 0, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"mean", "attention_hop":0, "dropout": 0, "ep": 60,
+        "comment" : "without attention using full vgg architecuter",
+        "status": "Done, 45%"
+        },
+
+    "avg_res":{
+        "base_lr": 1e-4, "lrs": [10, 1], "wd": 5e-2, "seeds": [-1], "opt": "sgd", "cuda": 3, "shift": false, 
+        "eval_fact": 40, "net": "resnet50", "pooling":"mean", "attention_hop":0, "dropout": 0, "ep": 60,
+        "comment" : "without attention using global pooling, poor generalization, probably needs more reg",
+        "status": "DONE"
+        },
+
+    "avg_res2":{
+        "base_lr": 1e-4, "lrs": [10, 1], "wd": 0.4, "seeds": [-1], "opt": "sgd", "cuda": 3, "shift": false, 
+        "eval_fact": 40, "net": "resnet50", "pooling":"mean", "attention_hop":0, "dropout": 0, "ep": 60,
+        "comment" : "using resnet50",
+        "status": "Done, 40%"
+        },
+
+    "avg_vgg_pool_softmax":{
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [-1], "opt": "sgd", "cuda": 0, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"softmax", "attention_hop":0, "dropout": 0, "ep": 16,
+        "comment" : "without attention using only vgg features + avg pooling", "C":0,
+        "status": "Done, 46.1%"
+        },
+
+    "avg_vgg_pool_mean":{
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [-1], "opt": "sgd", "cuda": 0, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"mean", "attention_hop":0, "dropout": 0, "ep": 16,
+        "comment" : "without attention using only vgg features + avg pooling",
+        "status": "Done, 43.2%"
+        },
+
+    "att_1":{
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [-1], "opt": "sgd", "cuda": 0, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"softmax", "attention_hop":1, "dropout": 0, "ep": 16,
+        "comment" : "with 1 attention", "C":0,
+        "status": "Done, 47.2%"
+        },
+
+    "att_2":{
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [-1], "opt": "sgd", "cuda": 0, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"softmax", "attention_hop": 4, "dropout": 0.2, "ep": 16,
+        "comment" : "with 2 attention", "C": 0.2,
+        "status": "Done, ??"
+        },
+
+    "att_2_new":{
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [-1], "opt": "sgd", "cuda": 1, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"softmax", "attention_hop": 8, "dropout": 0, "ep": 16,
+        "comment" : "with 2 attention", "C": 0.2,
+        "status": "Done, ??"
+        },
+
+    "att_2_norm":{
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [-1], "opt": "sgd", "cuda": 1, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"softmax", "attention_hop": 2, "dropout": 0, "ep": 16,
+        "comment" : "with 2 attention", "C": 0,
+        "status": "Done, ??"
+        },
+
+    "att_10":{
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [-1], "opt": "sgd", "cuda": 1, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"softmax", "attention_hop": 10, "dropout": 0, "ep": 16,
+        "comment" : "with 10 attentions", "C": 0.1,
+        "status": "??%"
+        },
+
+    "att_1_dp":{
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [-1], "opt": "sgd", "cuda": 0, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"softmax", "attention_hop": 1, "dropout": 0.2, "ep": 16,
+        "comment" : "with 1 attentions and dropout", "C": 0,
+        "status": "??%"
+        },
+
+    "att_2_shift":{
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [-1], "opt": "sgd", "cuda": 1, "shift": true, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"softmax", "attention_hop": 2, "dropout": 0, "ep": 16,
+        "comment" : "with 2 attentions + shift on newton",
+        "status": "Done, 16%"
+        },
+
+    "att_1_shift":{
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [999], "opt": "sgd", "cuda": 5, "shift": true, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"mean", "attention_hop":1, "dropout": 0, "ep": 60,
+        "comment" : "with 1 attention + shift",
+        "status": "Done, 42%"
+        },
+    
+    "att_1_shift_wo_tanh":{
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [999], "opt": "sgd", "cuda": 4, "shift": true, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"mean", "attention_hop":1, "dropout": 0, "ep": 60,
+        "comment" : "with 1 attention + shift",
+        "status": "Done, 40%"
+        },
+
+
+    "att_1_wo_tanh":{
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [-1], "opt": "sgd", "cuda": 5, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"mean", "attention_hop":1, "dropout": 0, "ep": 60,
+        "comment" : "with 1 attention",
+        "status": "Done, 43%"
+        },
+
+    "avg_vgg_pool_mean_3":{
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [-1], "opt": "sgd", "cuda": 0, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"mean", "attention_hop":0, "dropout": 0, "ep": 60,
+        "comment" : "without attention using only vgg features + avg pooling with regular sched trained on NEWTON",
+        "status": "Done, 45.4%"
+        },
+
+    "avg_vgg_pool_mean_2":{
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-2, "seeds": [-1], "opt": "sgd", "cuda": 3, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"mean", "attention_hop":0, "dropout": 0, "ep": 60,
+        "comment" : "without attention using only vgg features + avg pooling",
+        "status": "Done, 45%"
+        },
+
+    "avg_vgg_3":{
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [-1], "opt": "sgd", "cuda": 3, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"three", "attention_hop":0, "dropout": 0, "ep": 60,
+        "comment" : "without attention using only vgg features + three pooling",
+        "status": "Done, 45.6%"
+        },
+
+    "avg_slow_softmax_2":{
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [-1], "opt": "sgd", "cuda": 3, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"softmax", "attention_hop":0, "dropout": 0, "ep": 60,
+        "comment" : "without attention using full vgg architecuter",
+        "status": "Done, 47.2%"
+        },
+
+    "darknet":{
+        "base_lr": 1e-2, "lrs": [1, 1], "wd": 5e-4, "seeds": [-1], "opt": "sgd", "cuda": 0, "shift": false, 
+        "eval_fact": 40, "net": "darknet", "pooling":"mean", "attention_hop":0, "dropout": 0, "ep": 60,
+        "comment" : "without attention using only darknet",
+        "status": "Done 16%"
+        },
+
+    "paper_master":{
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [0], "opt": "sgd", "cuda": 0, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"softmax", "attention_hop":2, "dropout": 0, "ep": 30,
+        "comment" : "with attention",
+        "status": "Done 48.8"
+        },
+
+    "paper_master_att":{
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [0], "opt": "sgd", "cuda": 5, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"softmax", "attention_hop":2, "dropout": 0, "ep": 30,
+        "comment" : "with attention at the end",
+        "status": "??"
+        },
+
+    "paper_master_att_2_C_1":{
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [-1, -1], "opt": "sgd", "cuda": 0, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"softmax", "attention_hop":2, "dropout": 0, "ep": 16,
+        "comment" : "with attention at the end", "C":0,
+        "status": "??"
+        },
+
+    "paper_master_att_2":{
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [-1, -1], "opt": "sgd", "cuda": 1, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"softmax", "attention_hop": 2, "dropout": 0.2, "ep": 16,
+        "comment" : "with attention at the end", "C":0.1,
+        "status": "??"
+        },
+
+    "paper_master_att_0":{
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [0], "opt": "sgd", "cuda": 0, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"softmax", "attention_hop":1, "dropout": 0, "ep": 60,
+        "comment" : "with attention at the end", "C":0,
+        "status": "??"
+        },
+
+    "paper_master_seed":{
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [0, 971, 645], "opt": "sgd", "cuda": 4, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"softmax", "attention_hop":2, "dropout": 0, "ep": 30,
+        "comment" : "with attention",
+        "status": "??"
+        },
+
+    "paper_with_stats":{
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [0], "opt": "sgd", "cuda": 0, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"stats", "attention_hop":2, "dropout": 0, "ep": 30,
+        "comment" : "with attention and stats",
+        "status": "Done 46.21"
+        },
+
+    "paper_mean":{
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [0], "opt": "sgd", "cuda": 5, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"mean", "attention_hop":2, "dropout": 0, "ep": 30,
+        "comment" : "with attention",
+        "status": "Done 46.21"
+        }
+}
