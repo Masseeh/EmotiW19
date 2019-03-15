@@ -55,8 +55,8 @@ class Attentive_VGG(nn.Module):
             self.name += "att_"
             self.shift = shift
             self.attention_hop = attention_hop
-            self.attention = ShiftingAttention(512, self.attention_hop, dropout=dropout, shift=self.shift)
-            # self.attention = SelfAttention(512)
+            # self.attention = ShiftingAttention(512, self.attention_hop, dropout=dropout, shift=self.shift)
+            self.attention = SelfAttention(512)
             self.name += f"hop_{self.attention_hop}_{self.shift}_"
             self.use_attention = True
         else:

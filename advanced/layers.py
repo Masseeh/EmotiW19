@@ -6,27 +6,30 @@ import numpy as np
 def frobenius(mat):
     return torch.sum((torch.sum(torch.sum(mat**2, 1), 1) + 1e-10)**0.5)
 
+def conv1d(ni, no, ks=1, stride=1, padding=0, bias=False):
+    "Create and iniialize `nn.Conv1d` layer."
+    conv = nn.Conv1d(ni, no, ks, stride=stride, padding=padding, bias=bias)
+    nn.init.kaiming_normal_(conv.weight)
+    if bias: conv.bias.data.zero_()
+    return nn.utils.spectral_norm(conv)
+
 class SelfAttention(nn.Module):
     "Self attention layer for 2d."
     def __init__(self, dim):
         super().__init__()
-        self.query = nn.Linear(dim, dim//8, bias=False)
-        self.key   = nn.Linear(dim, dim//8, bias=False)
-        self.value = nn.Linear(dim, dim, bias=False)
-
-        self.layer_norm = LayerNormalization(dim)
+        self.query = conv1d(dim, dim//8)
+        self.key   = conv1d(dim, dim//8)
+        self.value = conv1d(dim, dim)
+        self.gamma = nn.Parameter(torch.tensor([0.]))
 
     def forward(self, x):
         #Notation from https://arxiv.org/pdf/1805.08318.pdf
-        C, H, W = x.size()[-3:]
-        x = x.permute(0, 2, 3, 1)
-        x = x.contiguous().view(-1, H*W, C)
-
+        size = x.size()
+        x = x.view(*size[:2],-1)
         f,g,h = self.query(x),self.key(x),self.value(x)
-        beta = F.softmax(torch.bmm(g, f.permute(0,2,1).contiguous()), dim=1)
-        # o = self.layer_norm(torch.bmm(beta, h) + x)
-        o = torch.bmm(beta, h) + x
-        return o, beta
+        beta = F.softmax(torch.bmm(f.permute(0,2,1).contiguous(), g), dim=1)
+        o = self.gamma * torch.bmm(h, beta) + x
+        return F.adaptive_avg_pool2d(o.view(*size).contiguous(), 1), beta
 
 def get_fans(shape):
     if len(shape) == 2:
@@ -54,7 +57,7 @@ class ShiftingAttention(nn.Module):
         self.n_att = n
         self.shift = shift
         
-        # self.attentions = nn.Sequential( nn.Linear(dim, n, bias=False), nn.Tanh() )
+        self.attentions = nn.Sequential( nn.Linear(dim, n, bias=False), nn.Tanh() )
         # self.attentions = nn.Sequential( nn.Linear(dim, 600, bias=True) ,
         #                                  nn.Tanh(),
         #                                  nn.Linear(600, n, bias=False) )
@@ -64,9 +67,9 @@ class ShiftingAttention(nn.Module):
 
 
         # self.attentions = nn.Sequential( nn.Conv2d(dim, n, 1, bias=False) , nn.Tanh() )
-        self.attentions = nn.Sequential( nn.Conv2d(dim, dim, 1),
-                                         nn.Tanh(),
-                                         nn.Conv2d(dim, n, 1, bias=False) )
+        # self.attentions = nn.Sequential( nn.Conv2d(dim, 256, 1),
+        #                                  nn.Tanh(),
+        #                                  nn.Conv2d(256, n, 1, bias=False) )
 
         # self.attentions = nn.Linear(dim, n)
 
@@ -76,17 +79,17 @@ class ShiftingAttention(nn.Module):
         self.b = nn.Parameter(glorot_normal((n,)))
 
     def forward(self, x):
-        # C, H, W = x.size()[-3:]
-        # x = x.permute(0, 2, 3, 1)
-        # x = x.contiguous().view(-1, H*W, C)
+        C, H, W = x.size()[-3:]
+        x = x.permute(0, 2, 3, 1)
+        x = x.contiguous().view(-1, H*W, C)
 
         # h = self.value(x)
         '''x = (N, L, F)'''
         scores = self.attentions(x)
-        scores = scores.view(scores.size(0), scores.size(1), -1)
-        x = x.view(x.size(0), x.size(1), -1)
+        # scores = scores.view(scores.size(0), scores.size(1), -1)
+        # x = x.view(x.size(0), x.size(1), -1)
         '''scores = (N, C, L)'''
-        weights = F.softmax(scores, dim=-1)
+        weights = F.softmax(scores, dim=1)
 
         '''weights = (N, C, L), sum(weights, -1) = 1''' 
         if self.shift:       
@@ -108,10 +111,10 @@ class ShiftingAttention(nn.Module):
                 outs.append(o)
             outputs = torch.cat(outs, -1)        
         else:
-            # outs = weights.permute(0, 2, 1)@x
+            outs = weights.permute(0, 2, 1)@x
             # outs = self.layer_norm(outs)
-            # weights = weights.permute(0, 2, 1) 
-            outs = x@weights.permute(0, 2, 1)  
+            weights = weights.permute(0, 2, 1) 
+            # outs = x@weights.permute(0, 2, 1)  
             outputs = outs.view(outs.size(0), -1)     
         
         '''outputs = (N, F*C)'''

@@ -42,16 +42,16 @@
         },
 
     "att_2":{
-        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [-1], "opt": "sgd", "cuda": 0, "shift": false, 
-        "eval_fact": 40, "net": "vgg16", "pooling":"softmax", "attention_hop": 4, "dropout": 0.2, "ep": 16,
-        "comment" : "with 2 attention", "C": 0.2,
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [0], "opt": "sgd", "cuda": 1, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"softmax", "attention_hop": 2, "dropout": 0.2, "ep": 16,
+        "comment" : "with 2 attention", "C": 10,
         "status": "Done, ??"
         },
 
     "att_2_new":{
-        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [-1], "opt": "sgd", "cuda": 1, "shift": false, 
-        "eval_fact": 40, "net": "vgg16", "pooling":"softmax", "attention_hop": 8, "dropout": 0, "ep": 16,
-        "comment" : "with 2 attention", "C": 0.2,
+        "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [0], "opt": "sgd", "cuda": 2, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"softmax", "attention_hop": 1, "dropout": 0, "ep": 16,
+        "comment" : "with 2 attention", "C": 0,
         "status": "Done, ??"
         },
 
@@ -149,8 +149,8 @@
 
     "paper_master_att":{
         "base_lr": 1e-2, "lrs": [10, 1], "wd": 5e-4, "seeds": [0], "opt": "sgd", "cuda": 5, "shift": false, 
-        "eval_fact": 40, "net": "vgg16", "pooling":"softmax", "attention_hop":2, "dropout": 0, "ep": 30,
-        "comment" : "with attention at the end",
+        "eval_fact": 40, "net": "vgg16", "pooling":"softmax", "attention_hop":2, "dropout": 0, "ep": 16,
+        "comment" : "with attention at the end", "C":0,
         "status": "??"
         },
 

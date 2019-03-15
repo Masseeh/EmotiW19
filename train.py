@@ -17,7 +17,7 @@ from advanced.layers import RegularizedLoss
 
 is_cuda = torch.cuda.is_available()
 # loss_fn = F.nll_loss
-base_path = '/export/livia/Database/AFEW/Faces'
+base_path = '/home/masiha/Emotion/Faces'
 
 
 def train(epoch, loss_fn, train_loader, model, optimizer, gclip=5, schd=None):
