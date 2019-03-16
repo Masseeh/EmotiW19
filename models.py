@@ -99,30 +99,30 @@ class Attentive_VGG(nn.Module):
 
 
 
-            # self.classifier = nn.Sequential(
-            #     *back.classifier
-            # )
+            self.classifier = nn.Sequential(
+                *back.classifier
+            )
 
-            # self.attention = Flatten()
-
-            # self.linear = nn.Sequential(
-            #     *back.classifier[:-1]
-            # )
-
-            # self.classifier = nn.Sequential(
-            #     # nn.Linear(4096 * 3, self.num_classes)
-            #     nn.Linear(4096, self.num_classes)
-            # )
+            self.attention = Flatten()
 
             self.linear = nn.Sequential(
-                Flatten(),
-                # nn.LayerNorm(512 * self.attention_hop)
+                *back.classifier[:-1]
             )
-            
+
             self.classifier = nn.Sequential(
-                nn.Linear(512 * self.attention_hop * self.pool_num, self.num_classes)
-                # nn.Linear(512 * 3, self.num_classes)
+                # nn.Linear(4096 * 3, self.num_classes)
+                nn.Linear(4096, self.num_classes)
             )
+
+            # self.linear = nn.Sequential(
+            #     Flatten(),
+            #     # nn.LayerNorm(512 * self.attention_hop)
+            # )
+            
+            # self.classifier = nn.Sequential(
+            #     nn.Linear(512 * self.attention_hop * self.pool_num, self.num_classes)
+            #     # nn.Linear(512 * 3, self.num_classes)
+            # )
 
 
         elif net.find('resnet50') != -1:

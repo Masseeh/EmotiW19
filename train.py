@@ -8,7 +8,7 @@ import numpy as np
 from fastprogress import master_bar, progress_bar
 from copy import deepcopy
 import torch.nn.utils as utils
-from advanced import one_cycle, cosine_scheduler
+from advanced import one_cycle, cosine_scheduler, adamw
 import json
 import argparse
 import random
@@ -19,6 +19,44 @@ is_cuda = torch.cuda.is_available()
 # loss_fn = F.nll_loss
 base_path = '/home/masiha/Emotion/Faces'
 
+class WarmStart:
+    def __init__(self, optimizer, steps, gamma=0.1, last_epoch=-1):
+        self.optimizer = optimizer
+        self.base_lrs = np.asarray(list(map(lambda group: group['lr'], self.optimizer.param_groups)))
+        self.last_epoch = last_epoch
+        self.steps = steps
+        self.warm_up = self.steps[0]
+        self.gamma = gamma
+
+    def step(self):
+        self.last_epoch += 1
+        start_lr = self.base_lrs
+        if self.last_epoch < self.warm_up:
+            start_lr = self.base_lrs*(self.gamma**self.warm_up)
+            start_lr *= (1/self.gamma)**self.last_epoch
+        
+        else:
+            for i, step in enumerate(self.steps[1:], 1):
+                if self.last_epoch == step:
+                    start_lr = self.base_lrs*(self.gamma**i)
+        
+        print(self.last_epoch + 1 , start_lr)
+        for param_group, lr  in zip(self.optimizer.param_groups, start_lr):
+            param_group['lr'] = lr
+
+        
+def adjust_learning_rate(optimizer, lr, epoch):
+    # import ipdb; ipdb.set_trace()
+    if epoch < 6:
+        start_lr = lr*(0.1**4)
+        start_lr *= 10**(epoch-1)
+    else:
+        start_lr = lr
+    
+    print(start_lr)
+
+    for param_group, sl  in zip(optimizer.param_groups, start_lr):
+        param_group['lr'] = sl
 
 def train(epoch, loss_fn, train_loader, model, optimizer, gclip=5, schd=None):
     model.train()
@@ -71,11 +109,11 @@ def valid(epoch, loss_fn, valid_loader, model):
 
 
 
-def loop(seed, name, ep=30, base_lr=1e-2, lrs=[0.1, 1], batch_size=3, wd=5e-4, opt='sgd', dropout=0, eval_fact=40,
+def loop(seed, name, ep=30, base_lr=1e-2, lrs=[10, 1], batch_size=3, wd=5e-4, opt='sgd', dropout=0, eval_fact=40,
             net="vgg16", pooling="softmax", debug=True, shift=False,
             attention_hop=0, cuda=0, C=0, **kwargs):
 
-    lr = [base_lr/i for i in lrs]
+    lr = np.asarray([base_lr/i for i in lrs])
 
     torch.cuda.set_device(cuda)
     if seed != -1:
@@ -115,12 +153,12 @@ def loop(seed, name, ep=30, base_lr=1e-2, lrs=[0.1, 1], batch_size=3, wd=5e-4, o
 
     [optimizer.add_param_group({'params': l.parameters(), 'lr': lr[1]}) for l in model.layer_groups[2:]]
 
-    # schd = torch.optim.lr_scheduler.MultiStepLR(optimizer, [10, 15, 25], gamma=0.1)
-    schd = cosine_scheduler.CosineLRWithRestarts(optimizer, batch_size, len(train_loader.dataset),
-                                                        restart_period=5, t_mult=2, verbose=True)
+    # schd = WarmStart(optimizer, [3, 10])
+    # schd = cosine_scheduler.CosineLRWithRestarts(optimizer, batch_size, len(train_loader.dataset),
+    #                                                     restart_period=5, t_mult=2, verbose=True)
 
-    # schd = one_cycle.OneCycle(optimizer, nb=int(len(train_loader.dataset) * ep /batch_size),
-    #                  prcnt=10, div=10)
+    schd = one_cycle.OneCycle(optimizer, nb=int(len(train_loader.dataset) * ep /batch_size),
+                     prcnt=10, div=10)
 
     best_acc = 0
     best_model = None
@@ -132,6 +170,7 @@ def loop(seed, name, ep=30, base_lr=1e-2, lrs=[0.1, 1], batch_size=3, wd=5e-4, o
     for epoch in epochs:
         if schd:
             schd.step()
+        
         train_loss = train(epochs, loss_fn=loss_fn, train_loader=train_loader,
                                  model=model, optimizer=optimizer, gclip=0, schd=schd)
         if not debug:

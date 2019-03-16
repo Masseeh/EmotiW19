@@ -1,21 +1,21 @@
 {
     "avg_slow":{
-        "base_lr": 1e-2, "lrs": [100, 1], "wd": 5e-2, "seeds": [-1], "opt": "sgd", "cuda": 0, "shift": false, 
-        "eval_fact": 40, "net": "vgg16", "pooling":"mean", "attention_hop":0, "dropout": 0, "ep": 60,
+        "base_lr": 1e-2, "lrs": [100, 1], "wd": 5e-4, "seeds": [-1], "opt": "adam", "cuda": 0, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"softmax", "attention_hop":0, "dropout": 0, "ep": 16,
         "comment" : "without attention using full vgg architecuter",
         "status": "Done, 45%"
         },
 
     "avg_res":{
-        "base_lr": 1e-4, "lrs": [10, 1], "wd": 5e-2, "seeds": [-1], "opt": "sgd", "cuda": 3, "shift": false, 
-        "eval_fact": 40, "net": "resnet50", "pooling":"mean", "attention_hop":0, "dropout": 0, "ep": 60,
+        "base_lr": 1e-2, "lrs": [100, 1], "wd": 1e-3, "seeds": [-1], "opt": "adam", "cuda": 1, "shift": false, 
+        "eval_fact": 40, "net": "resnet50", "pooling":"softmax", "attention_hop":0, "dropout": 0, "ep": 16,
         "comment" : "without attention using global pooling, poor generalization, probably needs more reg",
         "status": "DONE"
         },
 
     "avg_res2":{
-        "base_lr": 1e-4, "lrs": [10, 1], "wd": 0.4, "seeds": [-1], "opt": "sgd", "cuda": 3, "shift": false, 
-        "eval_fact": 40, "net": "resnet50", "pooling":"mean", "attention_hop":0, "dropout": 0, "ep": 60,
+        "base_lr": 1e-5, "lrs": [10, 1], "wd": 1e-3, "seeds": [-1], "opt": "adam", "cuda": 1, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"softmax", "attention_hop":0, "dropout": 0, "ep": 16,
         "comment" : "using resnet50",
         "status": "Done, 40%"
         },
