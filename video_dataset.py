@@ -112,16 +112,15 @@ def image_data(path, train='Train', valid='Valid',
 
     path=Path(path)
     fn, clss = map_data(root=str(path))
-
+    
     for p in ['Train', 'Valid']:
-        if not debug or p == 'Train': 
+        if debug or p == 'Train': 
             combined = list(zip(fn[p], clss[p]))
             random.shuffle(combined)
             fn[p], clss[p] = zip(*combined)
 
         fn[p] = list(itertools.chain(*fn[p]))
         clss[p] = list(itertools.chain(*clss[p]))
-
 
     tfms = [
         VideoWrap(transforms.Compose([

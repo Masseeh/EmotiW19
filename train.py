@@ -153,12 +153,13 @@ def loop(seed, name, ep=30, base_lr=1e-2, lrs=[10, 1], batch_size=3, wd=5e-4, op
 
     [optimizer.add_param_group({'params': l.parameters(), 'lr': lr[1]}) for l in model.layer_groups[2:]]
 
+    # schd = None
     # schd = WarmStart(optimizer, [3, 10])
-    # schd = cosine_scheduler.CosineLRWithRestarts(optimizer, batch_size, len(train_loader.dataset),
-    #                                                     restart_period=5, t_mult=2, verbose=True)
+    schd = cosine_scheduler.CosineLRWithRestarts(optimizer, batch_size, len(train_loader.dataset),
+                                                        restart_period=10, t_mult=2, verbose=True)
 
-    schd = one_cycle.OneCycle(optimizer, nb=int(len(train_loader.dataset) * ep /batch_size),
-                     prcnt=10, div=10)
+    # schd = one_cycle.OneCycle(optimizer, nb=int(len(train_loader.dataset) * ep /batch_size),
+    #                  prcnt=10, div=10)
 
     best_acc = 0
     best_model = None
@@ -183,7 +184,7 @@ def loop(seed, name, ep=30, base_lr=1e-2, lrs=[10, 1], batch_size=3, wd=5e-4, op
         if acc > best_acc:
             best_acc = acc
             best_model = deepcopy(model.state_dict())
-            torch.save(best_model, os.path.join(base_path, 'models', 'paper', name + '.pth'))
+            # torch.save(best_model, os.path.join(base_path, 'models', 'paper', name + '.pth'))
             
 
     return best_acc

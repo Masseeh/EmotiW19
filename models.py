@@ -55,8 +55,8 @@ class Attentive_VGG(nn.Module):
             self.name += "att_"
             self.shift = shift
             self.attention_hop = attention_hop
-            # self.attention = ShiftingAttention(512, self.attention_hop, dropout=dropout, shift=self.shift)
-            self.attention = SelfAttention(512)
+            self.attention = ShiftingAttention(512, self.attention_hop, dropout=dropout, shift=self.shift)
+            # self.attention = SelfAttention(512)
             self.name += f"hop_{self.attention_hop}_{self.shift}_"
             self.use_attention = True
         else:
@@ -103,26 +103,26 @@ class Attentive_VGG(nn.Module):
                 *back.classifier
             )
 
-            self.attention = Flatten()
-
-            self.linear = nn.Sequential(
-                *back.classifier[:-1]
-            )
-
-            self.classifier = nn.Sequential(
-                # nn.Linear(4096 * 3, self.num_classes)
-                nn.Linear(4096, self.num_classes)
-            )
+            # self.attention = Flatten()
 
             # self.linear = nn.Sequential(
-            #     Flatten(),
-            #     # nn.LayerNorm(512 * self.attention_hop)
+            #     *back.classifier[:-1]
             # )
-            
+
             # self.classifier = nn.Sequential(
-            #     nn.Linear(512 * self.attention_hop * self.pool_num, self.num_classes)
-            #     # nn.Linear(512 * 3, self.num_classes)
+            #     # nn.Linear(4096 * 3, self.num_classes)
+            #     nn.Linear(4096, self.num_classes)
             # )
+
+            self.linear = nn.Sequential(
+                Flatten(),
+                # nn.LayerNorm(512 * self.attention_hop)
+            )
+            
+            self.classifier = nn.Sequential(
+                nn.Linear(512 * self.attention_hop * self.pool_num, self.num_classes)
+                # nn.Linear(512 * 3, self.num_classes)
+            )
 
 
         elif net.find('resnet50') != -1:
