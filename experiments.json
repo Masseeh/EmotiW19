@@ -6,15 +6,15 @@
         "status": "Done, 49%"
         },
 
-    "vgg_avg":{
-        "base_lr": 1e-1, "lrs": [10000, 1], "wd": 5e-4, "seeds": [-1], "opt": "sgd", "cuda": 1, "shift": false, 
-        "eval_fact": 40, "net": "vgg16", "pooling":"softmax", "attention_hop":1, "dropout": 0, "ep": 30,
+    "vgg_mean":{
+        "base_lr": 1e-1, "lrs": [10000, 1], "wd": 5e-4, "seeds": [-1,-1,-1], "opt": "sgd", "cuda": 5, "shift": false, 
+        "eval_fact": 40, "net": "vgg16", "pooling":"mean", "attention_hop": 0, "dropout": 0, "ep": 30,
         "comment" : "without attention without full vgg architecuter",
         "status": "Done, 45%"
         },
 
-    "vgg_2":{
-        "base_lr": 1e-2, "lrs": [100, 0.1], "wd": 5e-4, "seeds": [-1], "opt": "sgd", "cuda": 1, "shift": false, 
+    "vgg_tp":{
+        "base_lr": 1e-1, "lrs": [10000, 1], "wd": 5e-4, "seeds": [-1], "opt": "sgd", "cuda": 1, "shift": false, 
         "eval_fact": 40, "net": "vgg16", "pooling":"softmax", "attention_hop":0, "dropout": 0, "ep": 30,
         "comment" : "without attention using full vgg architecuter",
         "status": "Done, 45%"

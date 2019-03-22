@@ -89,20 +89,6 @@ class Attentive_VGG(nn.Module):
                
             self.features = back.features  
 
-            # self.classifier = nn.Sequential(
-            #     Flatten(),
-            #     nn.Dropout(inplace=True),
-            #     nn.Linear(self.attention_hop * 512, hidden),
-            #     nn.Dropout(inplace=True),
-            #     nn.Linear(hidden, num_classes)
-            # )
-
-
-
-            self.classifier = nn.Sequential(
-                *back.classifier
-            )
-
             # self.attention = Flatten()
 
             # self.linear = nn.Sequential(

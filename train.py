@@ -17,46 +17,19 @@ from advanced.layers import RegularizedLoss
 
 is_cuda = torch.cuda.is_available()
 # loss_fn = F.nll_loss
-base_path = '/home/masiha/Emotion/Faces'
+# base_path = '/home/masiha/Emotion/Faces'
+base_path = '/export/livia/Database/AFEW/Faces'
 
-class WarmStart:
-    def __init__(self, optimizer, steps, gamma=0.1, last_epoch=-1):
-        self.optimizer = optimizer
-        self.base_lrs = np.asarray(list(map(lambda group: group['lr'], self.optimizer.param_groups)))
-        self.last_epoch = last_epoch
-        self.steps = steps
-        self.warm_up = self.steps[0]
-        self.gamma = gamma
+def requires_grad(m, b=None):
+    "If `b` is not set return `requires_grad` of first param, else set `requires_grad` on all params as `b`"
+    ps = list(m.parameters())
+    if not ps: return None
+    if b is None: return ps[0].requires_grad
+    for p in ps: p.requires_grad=b
 
-    def step(self):
-        self.last_epoch += 1
-        start_lr = self.base_lrs
-        if self.last_epoch < self.warm_up:
-            start_lr = self.base_lrs*(self.gamma**self.warm_up)
-            start_lr *= (1/self.gamma)**self.last_epoch
-        
-        else:
-            for i, step in enumerate(self.steps[1:], 1):
-                if self.last_epoch == step:
-                    start_lr = self.base_lrs*(self.gamma**i)
-        
-        print(self.last_epoch + 1 , start_lr)
-        for param_group, lr  in zip(self.optimizer.param_groups, start_lr):
-            param_group['lr'] = lr
-
-        
-def adjust_learning_rate(optimizer, lr, epoch):
-    # import ipdb; ipdb.set_trace()
-    if epoch < 6:
-        start_lr = lr*(0.1**4)
-        start_lr *= 10**(epoch-1)
-    else:
-        start_lr = lr
-    
-    print(start_lr)
-
-    for param_group, sl  in zip(optimizer.param_groups, start_lr):
-        param_group['lr'] = sl
+def freeze_to(model, n):
+    for g in model.layer_groups[:n]: requires_grad(g, False)
+    for g in model.layer_groups[n:]: requires_grad(g, True)
 
 def train(epoch, loss_fn, train_loader, model, optimizer, gclip=5, schd=None):
     model.train()
@@ -133,6 +106,9 @@ def loop(seed, name, ep=30, base_lr=1e-2, lrs=[10, 1], batch_size=3, wd=5e-4, op
     if is_cuda:
         model.cuda()
         loss_fn.cuda()
+
+    
+    freeze_to(model, -1)
 
     if opt == 'adam':
         optimizer = adamw.AdamW([{'params': model.layer_groups[0].parameters(), 'lr': lr[0]}],
